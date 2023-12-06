@@ -2,7 +2,7 @@
 call plug#begin()
 Plug 'preservim/nerdtree'
 Plug 'elixir-editors/vim-elixir'
-" Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'arrufat/vala.vim'
 Plug 'mattn/emmet-vim'
 Plug 'skurob/robpur-vim'
@@ -28,6 +28,7 @@ set backspace=indent,eol,start
 "set guifont=Terminus:h10
 set mouse=a
 "set t_Co=256
+set signcolumn=no
 
 " whitespaces
 set expandtab
@@ -45,7 +46,7 @@ map  <C-h> :tabp<CR>
 map  <C-n> :tabnew<CR>
 
 " colorscheme settings.
-colorscheme robpur-mk2
+colorscheme robpur
 set cursorline
 highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=233 guifg=NONE guibg=#121212
 
@@ -129,6 +130,20 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+local lspconfig = require("lspconfig")
+
+lspconfig.gopls.setup({
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+      },
+      staticcheck = true,
+    },
+  },
+})
+
 END
 
 nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
