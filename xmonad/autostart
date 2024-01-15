@@ -4,14 +4,14 @@ if pgrep xcompmgr &>/dev/null; then
     pkill -f xcompmgr
 fi
 
-xcompmgr -c &
+xcompmgr -cC &
 
 if pgrep trayer &>/dev/null; then
     pkill -f trayer
 fi
 
-trayer --edge top --align right --SetDockType true --SetPartialStrut true \
- --expand true --width 10 --transparent true --tint 0x5f5f5f --height 18 &
+trayer --edge bottom --align right --SetDockType true --SetPartialStrut true \
+ --expand true --width 5 --transparent true --alpha 0 --tint 0x283339 --height 17 &
 
 feh --bg-scale "/home/itsuwari/wallpapers/youmu.jpg"
 

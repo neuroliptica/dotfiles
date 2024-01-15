@@ -16,6 +16,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp' 
 Plug 'saadparwaiz1/cmp_luasnip' 
 Plug 'L3MON4D3/LuaSnip' 
+" Plug 'wlangstroth/vim-racket'
 call plug#end()
 
 " Basic settings.
@@ -79,7 +80,7 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local lspconfig = require('lspconfig')
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'gopls' }
+local servers = { 'gopls', 'pylsp', 'emmet_language_server', 'tsserver', 'hls' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     -- on_attach = my_custom_on_attach,
@@ -144,9 +145,47 @@ lspconfig.gopls.setup({
   },
 })
 
+lspconfig.pylsp.setup({
+  settings = {
+    -- configure plugins in pylsp
+    pylsp = {
+      plugins = {
+        pyflakes = {enabled = false},
+        pycodestyle = {enabled = false }, 
+        -- pylint = {enabled = false},
+      },
+    },
+  },
+})
+
+lspconfig.emmet_language_server.setup({
+  --filetypes = { "css", "eruby", "html", "javascript", "javascriptreact", "less", "sass", "scss", "pug", "typescriptreact" },
+  -- Read more about this options in the [vscode docs](https://code.visualstudio.com/docs/editor/emmet#_emmet-configuration).
+  -- **Note:** only the options listed in the table are supported.
+  init_options = {
+    --- @type string[]
+    excludeLanguages = {},
+    --- @type string[]
+    extensionsPath = {},
+    --- @type table<string, any> [Emmet Docs](https://docs.emmet.io/customization/preferences/)
+    preferences = {},
+    --- @type boolean Defaults to `true`
+    showAbbreviationSuggestions = true,
+    --- @type "always" | "never" Defaults to `"always"`
+    showExpandedAbbreviation = "always",
+    --- @type boolean Defaults to `false`
+    showSuggestionsAsSnippets = false,
+    --- @type table<string, any> [Emmet Docs](https://docs.emmet.io/customization/syntax-profiles/)
+    syntaxProfiles = {},
+    --- @type table<string, string> [Emmet Docs](https://docs.emmet.io/customization/snippets/#variables)
+    variables = {},
+  },
+})
+
 END
 
-nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+
+nnoremap <C-m> <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>

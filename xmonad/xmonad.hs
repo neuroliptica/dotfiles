@@ -12,6 +12,7 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.StatusBar
 import XMonad.Hooks.StatusBar.PP
 import XMonad.Util.Loggers
+import XMonad.Layout.Magnifier
 
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
@@ -62,18 +63,18 @@ myConfig = desktopConfig
 
 myXmobarPrint :: PP
 myXmobarPrint = def
-    { ppSep = magenta " • "
+    { ppSep = magenta "  "
     , ppTitleSanitize   = xmobarStrip
-    , ppCurrent         = wrap " " "" . xmobarBorder "Top" "#8be9fd" 2
+    , ppCurrent         = wrap " " "" . xmobarBorder "Bottom" "#8be9fd" 2
     , ppHidden          = white . wrap " " ""
-    , ppHiddenNoWindows = lowWhite . wrap " " ""
+    --, ppHiddenNoWindows = lowWhite . wrap " " ""
     , ppUrgent          = red . wrap (yellow "!") (yellow "!")
-    , ppOrder           = \[ws, l, _, wins] -> [ws, l, wins]
+    , ppOrder           = \[ws, l, _, wins] -> [ws, wins]
     , ppExtras          = [logTitles formatFocused formatUnfocused]
     }
   where
-    formatFocused   = wrap (white    "[") (white    "]") . magenta . ppWindow
-    formatUnfocused = wrap (lowWhite "[") (lowWhite "]") . blue    . ppWindow
+    formatFocused   = wrap (white    "[") (white    "]") . blue . ppWindow
+    formatUnfocused = wrap (lowWhite "[") (lowWhite "]") . magenta    . ppWindow
 
     ppWindow :: String -> String
     ppWindow = xmobarRaw . (\w -> if null w then "untitled" else w) . shorten 15 
