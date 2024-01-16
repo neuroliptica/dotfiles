@@ -12,8 +12,11 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
+
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp' 
+Plug 'hrsh7th/cmp-buffer'
+
 Plug 'saadparwaiz1/cmp_luasnip' 
 Plug 'L3MON4D3/LuaSnip' 
 " Plug 'wlangstroth/vim-racket'
@@ -21,7 +24,7 @@ call plug#end()
 
 " Basic settings.
 set number
-"set rnu
+set rnu
 set clipboard=unnamedplus
 syntax on
 "filetype plugin indent on
@@ -42,9 +45,9 @@ set shiftwidth=4
 set wildmenu
 
 " map hotkeys
-map  <C-l> :tabn<CR>
-map  <C-h> :tabp<CR>
-map  <C-n> :tabnew<CR>
+" map  <C-l> :tabn<CR>
+" map  <C-h> :tabp<CR>
+" map  <C-n> :tabnew<CR>
 
 " colorscheme settings.
 colorscheme robpur
@@ -129,6 +132,8 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'buffer' },
+    { name = 'path' },
   },
 }
 
@@ -185,7 +190,7 @@ lspconfig.emmet_language_server.setup({
 END
 
 
-nnoremap <C-m> <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <C-n> <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
