@@ -1,24 +1,33 @@
+-- *
+-- | xmonad @neuroliptica's config
+-- | xmonad + xmobar + tmux st
+-- *
+
+-- | General config 
 import XMonad
 import XMonad.Config.Desktop
-import XMonad.Prompt.ConfirmPrompt
 import XMonad.Util.Dmenu
 import XMonad.Util.Run (spawnPipe)
 import XMonad.Prompt.Shell
 import XMonad.Layout.ResizableTile
 import XMonad.Util.EZConfig (additionalKeysP)
--- import qualified Data.Map as M
 import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.DynamicLog
+
+-- | Status bar
 import XMonad.Hooks.StatusBar
 import XMonad.Hooks.StatusBar.PP
+
+-- | Logging
 import XMonad.Util.Loggers
-import XMonad.Layout.Magnifier
 
 import qualified Data.Map as M
+-- | Float managing
 import qualified XMonad.StackSet as W
 
 import System.Exit
 import Control.Monad
+
+import Data.List
 
 quitWithWarning :: X ()
 quitWithWarning = do
@@ -27,13 +36,20 @@ quitWithWarning = do
     when (s == m) (io exitSuccess)
 
 toggleFloat :: Window -> X ()
-toggleFloat w =
-  windows
-    ( \s ->
+toggleFloat w = do 
+    --(_, rr) <- floatLocation w
+    let rr = W.RationalRect 0.07 0.07 0.85 0.85
+    windows $ \s ->
         if M.member w (W.floating s)
-          then W.sink w s
-          else (W.float w (W.RationalRect 0.07 0.07 0.85 0.85) s)
-    )
+          then W.sink w s 
+          else W.float w rr s
+
+myManageHook = composeAll . concat $
+   [ [className =? c --> doFloat | c <- cFloats ] 
+   , [title     =? t --> doFloat | t <- tFloats ]
+   ]
+   where cFloats = []
+         tFloats = ["Media viewer"]
 
 main = xmonad
      . ewmhFullscreen 
@@ -42,14 +58,14 @@ main = xmonad
      $ myConfig
 
 myConfig = desktopConfig
-    { terminal = "st tmux"
-    , modMask  = mod4Mask
-    , borderWidth = 2 
-    , normalBorderColor = "black"
-    , focusedBorderColor = "gray"
-    , layoutHook = ResizableTall 1 (3/100) (1/2) []
-    , startupHook = spawn "/home/itsuwari/.config/xmonad/autostart"
-    --, keys = newKeys
+    { terminal           = "st tmux"
+    , modMask            = mod4Mask
+    , borderWidth        = 1
+    , normalBorderColor  = "black"
+    , focusedBorderColor = "#AA33EB"
+    , layoutHook         = ResizableTall 1 (3/100) (1/2) []
+    , startupHook        = spawn "/home/itsuwari/.config/xmonad/autostart"
+    , manageHook         = myManageHook <+> manageHook def
     }
     `additionalKeysP`
     [ ("M-k", sendMessage MirrorShrink)
@@ -58,16 +74,15 @@ myConfig = desktopConfig
     , ("M-d", shellPrompt def)
     , ("<Print>", spawn "xfce4-screenshooter")
     , ("M-S-<Space>", withFocused toggleFloat)
-    --, ("M-S-q", quitWithWarning)
+    , ("M-S-q", quitWithWarning)
     ]
 
 myXmobarPrint :: PP
 myXmobarPrint = def
     { ppSep = magenta "  "
     , ppTitleSanitize   = xmobarStrip
-    , ppCurrent         = wrap " " "" . xmobarBorder "Bottom" "#8be9fd" 2
+    , ppCurrent         = wrap " " "" . xmobarBorder "Top" "#8be9fd" 2
     , ppHidden          = white . wrap " " ""
-    --, ppHiddenNoWindows = lowWhite . wrap " " ""
     , ppUrgent          = red . wrap (yellow "!") (yellow "!")
     , ppOrder           = \[ws, l, _, wins] -> [ws, wins]
     , ppExtras          = [logTitles formatFocused formatUnfocused]
@@ -86,12 +101,3 @@ myXmobarPrint = def
     yellow   = xmobarColor "#f1fa8c" ""
     red      = xmobarColor "#ff5555" ""
     lowWhite = xmobarColor "#bbbbbb" ""
-
---myKeys :: XConfig Layout -> M.Map (KeyMask, KeySym) (X ())
---myKeys conf@(XConfig {XMonad.modMask = mmask}) = M.fromList $ 
---        [ ((mmask, xK_j), sendMessage MirrorShrink)
---        , ((mmask, xK_k), sendMessage MirrorExpand)
---        , ((mmask, xK_f), spawn "firefox")
---        ]
---
---newKeys x = myKeys x `M.union` keys def x

@@ -1,11 +1,14 @@
 " Plugins
 call plug#begin()
 Plug 'preservim/nerdtree'
+
 Plug 'elixir-editors/vim-elixir'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'arrufat/vala.vim'
 Plug 'mattn/emmet-vim'
+
 Plug 'skurob/robpur-vim'
+
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-lualine/lualine.nvim'
@@ -27,11 +30,10 @@ set number
 set rnu
 set clipboard=unnamedplus
 syntax on
-"filetype plugin indent on
+set noswapfile
 set backspace=indent,eol,start
 "set guifont=Terminus:h10
 set mouse=a
-"set t_Co=256
 set signcolumn=no
 
 " whitespaces
@@ -40,7 +42,6 @@ set tabstop=4
 set softtabstop=4
 set autoindent
 
-"set textwidth=80
 set shiftwidth=4
 set wildmenu
 
@@ -54,17 +55,9 @@ colorscheme robpur
 set cursorline
 highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=233 guifg=NONE guibg=#121212
 
-" block cursor.
-" let &t_SI = "\<esc>[5 q"  " blinking I-beam in insert mode
-" let &t_SR = "\<esc>[3 q"  " blinking underline in replace mode
-" let &t_EI = "\<esc>[ q"  " default cursor (usually blinking block) otherwiseo
-
 
 " NERDTree configuration.
-" ctrl + f open
 nmap <C-f> :NERDTreeToggle<CR>
-" auto exit when nerdtree is only window opened.  
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let NERDTreeWinSize = 50 
 
 " No auto gofmt on save
@@ -76,7 +69,6 @@ lua << END
 require('lualine').setup()
 require('mason').setup()
 require("mason-lspconfig").setup()
-require('lspconfig').gopls.setup{}
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -155,8 +147,12 @@ lspconfig.pylsp.setup({
     -- configure plugins in pylsp
     pylsp = {
       plugins = {
-        pyflakes = {enabled = false},
-        pycodestyle = {enabled = false }, 
+        pyflakes = {
+            enabled = false
+            },
+        pycodestyle = {
+            enabled = false
+            }, 
         -- pylint = {enabled = false},
       },
     },
@@ -164,31 +160,19 @@ lspconfig.pylsp.setup({
 })
 
 lspconfig.emmet_language_server.setup({
-  --filetypes = { "css", "eruby", "html", "javascript", "javascriptreact", "less", "sass", "scss", "pug", "typescriptreact" },
-  -- Read more about this options in the [vscode docs](https://code.visualstudio.com/docs/editor/emmet#_emmet-configuration).
-  -- **Note:** only the options listed in the table are supported.
   init_options = {
-    --- @type string[]
     excludeLanguages = {},
-    --- @type string[]
     extensionsPath = {},
-    --- @type table<string, any> [Emmet Docs](https://docs.emmet.io/customization/preferences/)
     preferences = {},
-    --- @type boolean Defaults to `true`
     showAbbreviationSuggestions = true,
-    --- @type "always" | "never" Defaults to `"always"`
     showExpandedAbbreviation = "always",
-    --- @type boolean Defaults to `false`
     showSuggestionsAsSnippets = false,
-    --- @type table<string, any> [Emmet Docs](https://docs.emmet.io/customization/syntax-profiles/)
     syntaxProfiles = {},
-    --- @type table<string, string> [Emmet Docs](https://docs.emmet.io/customization/snippets/#variables)
     variables = {},
   },
 })
 
 END
-
 
 nnoremap <C-n> <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
